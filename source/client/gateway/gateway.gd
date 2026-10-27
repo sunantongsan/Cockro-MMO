@@ -51,8 +51,8 @@ var current_theme: StringName = ThemePalettes.DEFAULT
 
 # Community / support links opened by the global "More" menu. Empty = not provided
 # yet → that button is disabled rather than opening a dead link.
-const LINK_WEBSITE: String = "https://ekoniaonline.com"
-const LINK_DISCORD: String = "https://discord.gg/QE5JwpFzgK"
+const LINK_WEBSITE: String = "https://github.com/sunantongsan/Cockro-MMO"
+const LINK_DISCORD: String = ""
 
 # Soft, organic foley placeholders, routed through the shared AudioManager's
 # polyphonic UI player (Sound bus, volume-bound to settings). Swap the files in
@@ -66,7 +66,7 @@ const MUSIC_GATEWAY: String = "res://assets/audio/music/angevin.ogg"
 # Release-stage tag shown after the build number in the ConnectionInfo line
 # ("Connected · Ekonia 0.2.0 - Alpha"). The version itself comes live from
 # project.godot via GatewayAPI.game_version(), so it never drifts from the build.
-const BUILD_STAGE: String = "Alpha"
+const BUILD_STAGE: String = "Internal test"
 
 # The persistent top-right "More" menu. Its nodes live in the scene (root-level,
 # unique-named); only the dynamic wiring is in code. See _wire_more_menu.
@@ -138,6 +138,10 @@ func _ready() -> void:
 ## any menu. Loops on "can't reach" (Retry); on a version mismatch it shows a hard
 ## "update required" block and returns false. Returns true once the gateway's good.
 func _boot_handshake() -> bool:
+	if GatewayAPI.base_url().is_empty():
+		_hide_connecting()
+		await popup_panel.confirm_message("Cockro test server is not configured yet. This build cannot connect online.", &"SERVER SETUP REQUIRED", &"OK")
+		return false
 	while true:
 		_show_connecting()
 		var response: Dictionary = await _request_handshake()

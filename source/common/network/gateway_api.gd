@@ -40,20 +40,16 @@ const ACTION_DISCONNECT := "disconnect"
 
 
 static func base_url() -> String:
-	if OS.has_feature("ekonia") or OS.has_feature("release"):
-		return "https://ws.ekoniaonline.com"
-	return "http://127.0.0.1:8088"
-
-	# var command_line_arg: String = CmdlineUtils.get_parsed_args().get("api", "")
-	# if command_line_arg:
-	# 	return command_line_arg
-	#
-	# # Check if has default in ProjectSettings
-	# # (set different values for debug/release export presets)).
-	# var value: String = ProjectSettings.get_setting("network/api/base_url", "")
-	# if not value.is_empty():
-	# 	return value
-	# return "http://127.0.0.1:8088"
+	# The fork must never send Cockro accounts to the upstream game's server.
+	var configured: String = str(ProjectSettings.get_setting("cockro/network/gateway_url", "")).strip_edges()
+	if not configured.is_empty():
+		if configured.begins_with("https://"):
+			return configured.rstrip("/")
+		push_error("Cockro gateway must use HTTPS.")
+		return ""
+	if OS.has_feature("editor"):
+		return "http://127.0.0.1:8088"
+	return ""
 
 
 static func get_endpoint(path: String) -> String:

@@ -9,8 +9,6 @@ name: Release clients to itch.io
 # secret being set. Until you add it (see docs/release_pipeline.md), the
 # Windows/Linux/Web release runs exactly as before — Android is simply skipped.
 on:
-  push:
-    tags: ["v*"]
   workflow_dispatch:
     inputs:
       platforms:
@@ -26,6 +24,7 @@ env:
 
 jobs:
   release:
+    if: github.repository == 'SlayHorizon/godot-tiny-mmo'
     runs-on: ubuntu-22.04
     permissions:
       actions: read   # needed for `gh run download` to read the build-templates run
