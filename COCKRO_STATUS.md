@@ -1,26 +1,24 @@
-# Cockro MMO migration — 2026-10-28
+# Cockro Android internal preview — code 81
 
-Based on SlayHorizon/godot-tiny-mmo at f4ed04f20963c3285117e58b1149fa1117658d3c. Original MIT license retained; asset licenses require separate review before distribution.
+Fork of SlayHorizon/godot-tiny-mmo at f4ed04f20963c3285117e58b1149fa1117658d3c. Original license retained.
 
-## Prepared
-- Cockro project identity and landscape Android AAB preset.
-- Package com.sunantongsan.networkcokcro matches Cockro-Networkv4 app.json.
-- Play Console checked: internal track already serves version 80 (4.0.0), Cockro Man - Internal, released 2026-10-27. Prepared next code 81; recheck before upload.
-- Gateway URL is now a project setting: cockro/network/gateway_url (HTTPS). No upstream production endpoint fallback.
-- Removed missing developer MCP autoload/plugin; disabled inherited upstream publishing workflow in this fork.
+## Android training preview
+- Package `com.sunantongsan.networkcokcro`; version `4.0.0-internal.1` (81), landscape, arm64.
+- Local training menu using existing Cockro-Networkv4 mascot (assets/mascot-wai.webp).
+- Multitouch movement, attack and area skill; sword, bow, gun, club and Cockroach Man training loadouts.
+- Enemy targets, health, cooldowns, defeat and restart. Training does not read or modify accounts, currencies or database.
+- Thai font: Noto Sans Thai, SIL Open Font License in assets/cockro/OFL.txt.
+- These are prototype weapon loadouts, not completed MMORPG professions. Art, animations, maps and enemy behavior are placeholders.
 
-## Not ready for release
-- No Cockro hosted gateway/master/world server configured. Database access alone is insufficient.
-- Existing Android upload keystore and current Play version must be verified.
-- Cockroach character art/animations, gun and five classes including Cockroach Man are not implemented.
-- Existing account/database integration is not migrated.
-- Do not upload until Android build, startup, two-client combat and save/reconnect checks pass.
+## Online migration remains incomplete
+No hosted Cockro gateway/master/world server configured. Online control is disabled when the HTTPS gateway setting is empty. Original Tiny MMO online client/server source remains in the fork. Prior account/database integration, five complete professions, original animal collection and two-client combat/save/reconnect validation are not complete.
 
 ## Validation
-- Godot 4.6.3 editor import completed with no script parse errors after importing assets.
-- Headless client startup completed; resource leak warnings at exit remain. This is not Android or multiplayer verification.
-- Installed godot-sqlite v4.7 Linux binaries locally for validation (not committed).
+Godot 4.6.3 imports and starts the client. Automated training checks cover all five weapon damage paths, attack cooldown, skill cooldown, touch movement/release, focus-loss reset and defeat/restart. Desktop rendering inspected at 960x540. Upstream ObjectDB/resource warnings remain at engine shutdown.
+Local gateway/master handshake previously returned {"ok":true}; this does not verify Internet multiplayer.
+Existing COCKRO upload key was retrieved privately and used only for Android signing, never committed.
 
-- Initial separate-process smoke attempt failed. Retest with all services in one process environment succeeded: gateway/master connected and POST /v1/handshake returned {"ok":true}. This verifies only local handshake, not two-player world gameplay or phone access.
-- Library contains COCKRO-upload-key-backup.zip; not downloaded or used yet.
+## Build
+Install Godot 4.6.3 Android export templates, JDK17, Android SDK36 and build tools36.1.0. Install the Android build template to android/build and retain android/.gdignore. Set Godot editor SDK/JDK paths and GODOT_ANDROID_KEYSTORE_RELEASE_PATH, GODOT_ANDROID_KEYSTORE_RELEASE_USER, GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD privately. Run Godot --headless --path . --export-release Android exports/android/cockro-81.aab. Android generated files and exports are ignored by git.
 
+Internal preview upload is permitted after successful signed build and package validation. Full online release requires hosted-server and multiplayer validation. Distribution status must be checked in Play Console; this document is not proof of rollout.

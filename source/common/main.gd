@@ -30,7 +30,7 @@ func _ready() -> void:
 
 
 func start_as_client() -> void:
-	get_tree().change_scene_to_file.call_deferred("res://source/client/client_main.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/cockro/training.tscn")
 
 
 func start_as_gateway_server() -> void:
