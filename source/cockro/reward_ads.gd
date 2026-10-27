@@ -49,9 +49,12 @@ func request(item: String) -> void:
 			return
 		ad = loaded
 		var full := FullScreenContentCallback.new()
-		full.on_ad_failed_to_show_full_screen_content = func(_error): finish("เปิดโฆษณาไม่สำเร็จ ยังไม่ได้รับของ")
+		full.on_ad_failed_to_show_full_screen_content = func(_error):
+			if current == generation:
+				finish("เปิดโฆษณาไม่สำเร็จ ยังไม่ได้รับของ")
 		full.on_ad_dismissed_full_screen_content = func():
-			finish(message if earned else "ปิดโฆษณาก่อนรับรางวัล ยังไม่ได้รับของ")
+			if current == generation:
+				finish(message if earned else "ปิดโฆษณาก่อนรับรางวัล ยังไม่ได้รับของ")
 		ad.full_screen_content_callback = full
 		var reward := OnUserEarnedRewardListener.new()
 		reward.on_user_earned_reward = func(_reward):
