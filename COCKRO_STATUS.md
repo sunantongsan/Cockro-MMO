@@ -31,3 +31,12 @@ Internal preview upload is permitted after successful signed build and package v
 - Release blocked by existing app Advertising ID declaration versus the preview's absent AD_ID permission. Preview has no ads. Automatic action review rejected Google's publish-without-permission option pending explicit user approval. No declaration or permission bypass applied.
 - Other Play warnings: 5,588 fewer supported devices (arm64-only preview), larger download, missing deobfuscation/native symbol files.
 - To reproduce the local build, keep android/.gdignore present before importing; remove stale *.import metadata from generated android resources if earlier imports scanned that directory.
+
+## Rewarded ads — internal code82
+- Added native Poing AdMob 5.1.0 / Godot4.6.3 Android integration, Google Mobile Ads next-gen SDK1.4.0, and AD_ID/network permissions. Uses Google's TEST app/unit IDs only; this build earns no advertising revenue.
+- Run `python tools/install_admob.py` before opening/importing a fresh checkout. Dependency archives are pinned to official release URLs and SHA256 hashes; generated dependency files stay out of git.
+- Voluntary shop: 1 rewarded ad unlocks weapon (+5 damage) or hero armor (130 starting HP), or grants 1 enhancement stone. Weapon enhancement consumes a stone, succeeds deterministically, adds +3 damage per level, capped at +5.
+- Reward is issued only from the native SDK earned-reward callback, with a unique receipt and duplicate guard. Close/failure/timeout never grants rewards. Loading prevents concurrent requests. Owned nonconsumables cannot be claimed again.
+- Inventory is atomically persisted under user://training_rewards_v1.json. This is local INTERNAL TEST inventory only, never an authoritative online account or transferable economy. Live advertising and online rewards require production AdMob IDs, UMP consent configuration, authenticated SSV and server-side inventory transactions before launch.
+- Inventory tests pass: invalid claims, duplicate receipts, ownership, enhancement consumption/cap, reload persistence, and no reward on ad failure/non-Android fallback. Shop rendered and inspected at960x540. Native ad playback still needs testing on an Android device.
+- Code82 supersedes draft81. Do not use the rejected publish-without-AD_ID workaround: this version includes actual ad functionality requested by the user.

@@ -21,6 +21,13 @@ var active := false
 var status: Label
 var skill_button: Button
 var menu: PanelContainer
+var ads: Node
+var shop: PanelContainer
+var shop_info: Label
+var shop_message: Label
+var offer_buttons: Dictionary = {}
+var enhance_button: Button
+var shop_was_active := false
 var hud: Control
 var mascot: Texture2D = preload("res://assets/cockro/mascot.webp")
 var font: Font = preload("res://assets/cockro/NotoSansThai.ttf")
@@ -50,11 +57,11 @@ func _ready() -> void:
 	var back := make_button("เมนู", Vector2(844, 12), Vector2(90, 44))
 	back.pressed.connect(show_menu)
 	menu = PanelContainer.new()
-	menu.position = Vector2(210, 72)
+	menu.position = Vector2(210, 36)
 	menu.size = Vector2(540, 396)
 	hud.add_child(menu)
 	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 14)
+	col.add_theme_constant_override("separation", 8)
 	menu.add_child(col)
 	var title := Label.new()
 	title.text = "COCKRO MMO • ANDROID PREVIEW"
@@ -64,7 +71,7 @@ func _ready() -> void:
 	art.texture = mascot
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	art.custom_minimum_size = Vector2(0, 130)
+	art.custom_minimum_size = Vector2(0, 92)
 	col.add_child(art)
 	var info := Label.new()
 	info.text = "สนามฝึกออฟไลน์ • ต้นแบบอาวุธ 5 แบบ\nลากฝั่งซ้ายเพื่อเดิน • กดโจมตี / สกิล\nระบบอาชีพและสัตว์เดิมยังอยู่ระหว่างพัฒนา"
@@ -80,6 +87,17 @@ func _ready() -> void:
 	online.disabled = GatewayAPI.base_url().is_empty()
 	online.pressed.connect(func(): get_tree().change_scene_to_file("res://source/client/client_main.tscn"))
 	col.add_child(online)
+	ads = preload("res://source/cockro/reward_ads.gd").new()
+	add_child(ads)
+	ads.changed.connect(refresh_shop)
+	build_shop()
+	var shop_button := make_button("แลกของ", Vector2(720, 12), Vector2(110, 44))
+	shop_button.pressed.connect(open_shop)
+	var menu_shop := Button.new()
+	menu_shop.text = "ดูโฆษณาแลกของ / ตีบวก"
+	menu_shop.custom_minimum_size.y = 44
+	menu_shop.pressed.connect(open_shop)
+	col.add_child(menu_shop)
 	show_menu()
 
 func make_button(caption: String, pos: Vector2, dimensions: Vector2) -> Button:
@@ -101,7 +119,7 @@ func show_menu() -> void:
 func start_training() -> void:
 	menu.hide()
 	active = true
-	hp = 100
+	hp = 130 if ads and ads.inventory.data.outfit else 100
 	score = 0
 	hero = Vector2(480, 280)
 	foes.clear()
@@ -186,7 +204,10 @@ func attack() -> void:
 			nearest = distance
 			target = enemy
 	if not target.is_empty():
-		target.hp -= DAMAGE[weapon]
+		var bonus := 0
+		if ads and ads.inventory.data.weapon:
+			bonus = 5 + int(ads.inventory.data.level) * 3
+		target.hp -= DAMAGE[weapon] + bonus
 		shots.append({"from": hero, "to": target.pos, "life": 0.16, "ranged": weapon == 1 or weapon == 2})
 	flash = 0.12
 
@@ -216,9 +237,107 @@ func _draw() -> void:
 	if flash > 0:
 		draw_arc(hero, 65 if flash < 0.2 else 230, 0, TAU, 48, Color("ffd16b"), 4)
 	draw_circle(hero + Vector2(0, 30), 28, Color(0, 0, 0, 0.3))
+	if ads and ads.inventory.data.outfit:
+		draw_arc(hero, 44, 0, TAU, 40, Color("65e4b5"), 4)
 	draw_texture_rect(mascot, Rect2(hero - Vector2(38, 45), Vector2(76, 90)), false)
 	for shot in shots:
 		draw_line(shot.from, shot.to, Color("80e6ff") if shot.ranged else Color("ffd16b"), 4)
 	var origin := stick_origin if stick_id >= 0 else Vector2(115, 393)
 	draw_circle(origin, 62, Color(0.6, 0.8, 0.9, 0.12))
 	draw_circle(origin + stick * 64, 24, Color(0.7, 0.9, 1, 0.4))
+
+
+func build_shop() -> void:
+	shop = PanelContainer.new()
+	shop.position = Vector2(104, 40)
+	shop.size = Vector2(752, 460)
+	hud.add_child(shop)
+	var margin := MarginContainer.new()
+	for side in ["left", "right", "top", "bottom"]:
+		margin.add_theme_constant_override("margin_" + side, 16)
+	shop.add_child(margin)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 10)
+	margin.add_child(col)
+	var title := Label.new()
+	title.text = "ดูโฆษณาแลกของ • สนามฝึก"
+	col.add_child(title)
+	shop_info = Label.new()
+	col.add_child(shop_info)
+	var rows := HBoxContainer.new()
+	rows.add_theme_constant_override("separation", 12)
+	col.add_child(rows)
+	var details := {"weapon": "โจมตี +5 • ตีบวกได้ถึง +5", "outfit": "พลังชีวิตเริ่มต้น 130", "stone": "วัตถุดิบตีบวก 1 ก้อน"}
+	var icons := {"weapon": "sword", "outfit": "shield", "stone": "gem"}
+	for item: String in CockroRewardInventory.CATALOG:
+		var card := VBoxContainer.new()
+		card.custom_minimum_size = Vector2(226, 0)
+		rows.add_child(card)
+		var icon := TextureRect.new()
+		icon.texture = load("res://assets/node_icons/green/icon_%s.png" % icons[item])
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.custom_minimum_size = Vector2(0, 60)
+		card.add_child(icon)
+		var caption := Label.new()
+		caption.text = CockroRewardInventory.CATALOG[item] + "\n" + details[item]
+		caption.add_theme_font_size_override("font_size", 17)
+		caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		card.add_child(caption)
+		var button := Button.new()
+		button.text = "ดูโฆษณา 1 ครั้ง รับของ"
+		button.add_theme_font_size_override("font_size", 16)
+		button.custom_minimum_size.y = 52
+		button.pressed.connect(func(): ads.request(item))
+		card.add_child(button)
+		offer_buttons[item] = button
+	enhance_button = Button.new()
+	enhance_button.text = "ตีบวกอาวุธ +1 • ใช้หิน 1 ก้อน • สำเร็จแน่นอน"
+	enhance_button.custom_minimum_size.y = 48
+	enhance_button.pressed.connect(func():
+		if ads.inventory.enhance():
+			ads.message = "ตีบวกสำเร็จ! อาวุธ +%d" % ads.inventory.data.level
+		refresh_shop()
+	)
+	col.add_child(enhance_button)
+	shop_message = Label.new()
+	shop_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	shop_message.custom_minimum_size = Vector2(690, 54)
+	shop_message.add_theme_font_size_override("font_size", 17)
+	col.add_child(shop_message)
+	var close_button := Button.new()
+	close_button.text = "กลับ"
+	close_button.custom_minimum_size.y = 44
+	close_button.pressed.connect(func():
+		if ads.busy:
+			return
+		shop.hide()
+		active = shop_was_active
+		menu.visible = not active
+	)
+	col.add_child(close_button)
+	shop.hide()
+	refresh_shop()
+
+func open_shop() -> void:
+	shop_was_active = active
+	active = false
+	attacking = false
+	stick = Vector2.ZERO
+	stick_id = -1
+	attack_id = -1
+	menu.hide()
+	shop.show()
+	refresh_shop()
+
+func refresh_shop() -> void:
+	if shop_info == null:
+		return
+	var bag: Dictionary = ads.inventory.data
+	shop_info.text = "อาวุธ: %s  |  ชุด: %s  |  หิน: %d" % ["+%d" % bag.level if bag.weapon else "ยังไม่มี", "มีแล้ว" if bag.outfit else "ยังไม่มี", bag.stones]
+	shop_message.text = ads.message + "\nโฆษณาทดสอบ • ของบันทึกบนเครื่องนี้ ยังไม่เชื่อมบัญชีออนไลน์"
+	for item: String in offer_buttons:
+		var button: Button = offer_buttons[item]
+		button.disabled = ads.busy or not ads.inventory.available(item)
+		button.text = "รับแล้ว • สวมใส่อัตโนมัติ" if item != "stone" and bag[item] else "ดูโฆษณา 1 ครั้ง รับของ"
+	enhance_button.disabled = ads.busy or not bag.weapon or bag.stones < 1 or bag.level >= 5

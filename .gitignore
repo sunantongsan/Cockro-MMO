@@ -37,3 +37,6 @@ source/server/master/account_collection.tres
 /addons/godot_mcp
 /android/
 /exports/
+
+/addons/admob/
+/poing-godot-admob/

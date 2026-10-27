@@ -8,6 +8,10 @@
 
 config_version=5
 
+[admob]
+
+general/ios/enabled=false
+
 [animation]
 
 compatibility/default_parent_skeleton_in_mesh_instance_3d=true
@@ -15,7 +19,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Cockro MMO"
-config/version="4.0.0-internal.1"
+config/version="4.0.0-internal.2"
 run/main_scene="res://source/common/main.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="cockro-mmo"
@@ -50,11 +54,10 @@ window/size/viewport_height=540
 window/size/window_width_override=960
 window/size/window_height_override=540
 window/stretch/mode="canvas_items"
-window/handheld/orientation=0
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg", "res://addons/tinymmo/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg", "res://addons/tinymmo/plugin.cfg", "res://addons/admob/plugin.cfg")
 
 [file_customization]
 
