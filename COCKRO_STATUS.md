@@ -21,5 +21,6 @@ Based on SlayHorizon/godot-tiny-mmo at f4ed04f20963c3285117e58b1149fa1117658d3c.
 - Headless client startup completed; resource leak warnings at exit remain. This is not Android or multiplayer verification.
 - Installed godot-sqlite v4.7 Linux binaries locally for validation (not committed).
 
-- Local gateway/master/world smoke test did not establish connectivity; no online play verified.
+- Initial separate-process smoke attempt failed. Retest with all services in one process environment succeeded: gateway/master connected and POST /v1/handshake returned {"ok":true}. This verifies only local handshake, not two-player world gameplay or phone access.
 - Library contains COCKRO-upload-key-backup.zip; not downloaded or used yet.
+
