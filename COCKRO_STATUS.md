@@ -5,7 +5,7 @@ Based on SlayHorizon/godot-tiny-mmo at f4ed04f20963c3285117e58b1149fa1117658d3c.
 ## Prepared
 - Cockro project identity and landscape Android AAB preset.
 - Package com.sunantongsan.networkcokcro matches Cockro-Networkv4 app.json.
-- Version code 80 is provisional: verify against Play Console before building a release.
+- Play Console checked: internal track already serves version 80 (4.0.0), Cockro Man - Internal, released 2026-10-27. Prepared next code 81; recheck before upload.
 - Gateway URL is now a project setting: cockro/network/gateway_url (HTTPS). No upstream production endpoint fallback.
 - Removed missing developer MCP autoload/plugin; disabled inherited upstream publishing workflow in this fork.
 
@@ -20,3 +20,6 @@ Based on SlayHorizon/godot-tiny-mmo at f4ed04f20963c3285117e58b1149fa1117658d3c.
 - Godot 4.6.3 editor import completed with no script parse errors after importing assets.
 - Headless client startup completed; resource leak warnings at exit remain. This is not Android or multiplayer verification.
 - Installed godot-sqlite v4.7 Linux binaries locally for validation (not committed).
+
+- Local gateway/master/world smoke test did not establish connectivity; no online play verified.
+- Library contains COCKRO-upload-key-backup.zip; not downloaded or used yet.
