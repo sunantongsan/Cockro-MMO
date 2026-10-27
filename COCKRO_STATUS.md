@@ -1,4 +1,6 @@
-# Cockro Android internal preview — code 81
+# Cockro Android internal preview — code 82
+
+CURRENT STATUS: Google Play internal track shows code82 (4.0.0-internal.2), Rewarded Ads Test, ready for internal testers. Published 2026-10-28 06:52 Thailand time. Code81 was never rolled out. Historical code81 notes below are retained for traceability.
 
 Fork of SlayHorizon/godot-tiny-mmo at f4ed04f20963c3285117e58b1149fa1117658d3c. Original license retained.
 
@@ -42,3 +44,5 @@ Internal preview upload is permitted after successful signed build and package v
 - Code82 supersedes draft81. Do not use the rejected publish-without-AD_ID workaround: this version includes actual ad functionality requested by the user.
 - Code82 signed AAB: 50,969,010 bytes; SHA256 8d7fc60d28781648483a7ab4cedc3174333ecff6a3083b764bf6d5e330c86636. bundletool validation and jarsigner signature verification pass. Exported game data starts without script errors (desktop/headless, not physical Android).
 - Manifest verified: code82, original package, native PoingGodotAdMobRewardedAd registration and AD_ID permission. Required MIT/font notices included; no signing keys inside bundle. Full-screen callbacks ignore stale ad generations.
+
+- Final Play validation: no Advertising ID error; four nonblocking warnings (device coverage, download size, missing deobfuscation/native symbols). Normal Save and Publish completed. Internal track4701506968907566093 confirms latest release82 ready for testers. No production/closed-track rollout performed.
