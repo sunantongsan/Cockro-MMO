@@ -40,6 +40,10 @@ Announcer="*res://source/client/autoload/announcer.gd"
 Transition="*res://source/client/autoload/transition.gd"
 LootFeed="*res://source/client/autoload/loot_feed.gd"
 
+[cockro]
+
+network/android_gateway_url="https://game.guardscan.xyz"
+
 [debug]
 
 gdscript/warnings/unused_variable=0
