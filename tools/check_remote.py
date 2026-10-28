@@ -41,7 +41,7 @@ def main():
     else:
         if STATE.exists():
             raise SystemExit('Existing test account found. Use --resume.')
-        account = {'a-u': 'qa' + secrets.token_hex(4), 'a-p': secrets.token_hex(20)}
+        account = {'a-u': 'qa' + secrets.token_hex(4), 'a-p': secrets.token_hex(16)}
         request('account/create', account)
         with os.fdopen(os.open(STATE, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), 'w') as output:
             json.dump(account, output)
