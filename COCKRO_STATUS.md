@@ -1,3 +1,31 @@
+# Original Tiny MMO restoration — in progress (2026-10-28)
+
+Current user scope: make the ORIGINAL game playable first. Keep original characters,
+classes, maps and animals. Cockro characters and additional professions are deferred.
+
+- Client startup now opens `source/client/client_main.tscn`, the original gateway/world
+  flow, instead of the separate training arena. Plain editor runs default to client
+  consistently with the autoload role checks.
+- `python tools/run_classic.py /path/to/godot` launches the three local servers,
+  waits for the gateway and a world, then opens the original client. Requires a
+  Godot 4.6.3 editor checkout with assets imported first. This is LOCAL development,
+  not public hosting or an Android release.
+- `python tools/check_classic.py /path/to/godot` exercises signup, login, original
+  character creation, world replication, movement, disconnect/relogin and character
+  retrieval. Uses disposable QA accounts in the local development database. It does
+  not prove restart persistence, combat, quests, touch UI or real-device performance.
+- Two consecutive full local smoke runs passed after changing the test harness to
+  a scene (a `--script` test caused premature autoload compilation). Earlier native
+  world-load crashes were observed; their cause is not yet established. Do not
+  describe the world server as fully stable on this evidence.
+- Authentication tokens are no longer printed by the world server.
+- No new Android build or Play rollout. Public HTTPS gateway/WSS world hosting is
+  still unconfigured. The code82 Play notes below are HISTORICAL, not the status of
+  this unshipped source change. Do not publish this source as a playable Android
+  release until hosting and device/gameplay validation are complete.
+
+---
+
 # Cockro Android internal preview — code 82
 
 CURRENT STATUS: Google Play internal track shows code82 (4.0.0-internal.2), Rewarded Ads Test, ready for internal testers. Published 2026-10-28 06:52 Thailand time. Code81 was never rolled out. Historical code81 notes below are retained for traceability.

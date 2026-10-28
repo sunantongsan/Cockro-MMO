@@ -53,4 +53,4 @@ static func _detect() -> String:
 	for candidate: String in [MODE_CLIENT, MODE_MASTER, MODE_GATEWAY, MODE_WORLD]:
 		if OS.has_feature(candidate):
 			return candidate
-	return ""
+	return MODE_CLIENT

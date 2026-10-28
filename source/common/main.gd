@@ -23,14 +23,12 @@ func _ready() -> void:
 			features[feature].call()
 			return
 	
-	printerr(
-		"No valid feature tag was found."
-		+ "\nPlease check either README.md or common/main.gd."
-	)
+	# Running the project normally should open the original game too.
+	start_as_client()
 
 
 func start_as_client() -> void:
-	get_tree().change_scene_to_file.call_deferred("res://source/cockro/training.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/client/client_main.tscn")
 
 
 func start_as_gateway_server() -> void:
