@@ -28,17 +28,18 @@ def main():
     folder = Path('/etc/caddy')
     folder.mkdir(exist_ok=True)
     config = folder / 'Caddyfile'
-    if config.exists():
+    local_config = 'http://127.0.0.1:8090 {' + ROUTES + '}\n'
+    if config.exists() and config.read_text() != local_config:
         raise SystemExit('Existing Caddy configuration found; inspect it before proceeding.')
-    config.write_text('http://127.0.0.1:8090 {' + ROUTES + '}\n')
+    config.write_text(local_config)
     subprocess.run(['apt-get', '-o', 'Dpkg::Options::=--force-confold',
                     'install', '-y', 'caddy'], check=True,
                    env={**os.environ, 'DEBIAN_FRONTEND': 'noninteractive'})
     pending = folder / 'Caddyfile.pending'
     pending.write_text(DOMAIN + ' {\n'
-        '    tls {\n        issuer acme {\n'
-        '            ca https://acme-v02.api.letsencrypt.org/directory\n'
-        '        }\n    }\n' + ROUTES + '}\n')
+        '    tls {\n'
+        '        ca https://acme-v02.api.letsencrypt.org/directory\n'
+        '    }\n' + ROUTES + '}\n')
     subprocess.run(['caddy', 'validate', '--adapter', 'caddyfile', '--config', str(pending)], check=True)
     subprocess.run(['systemctl', 'restart', 'caddy'], check=True)
     response = b''
