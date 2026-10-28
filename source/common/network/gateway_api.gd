@@ -42,6 +42,8 @@ const ACTION_DISCONNECT := "disconnect"
 static func base_url() -> String:
 	# The fork must never send Cockro accounts to the upstream game's server.
 	var configured: String = str(ProjectSettings.get_setting("cockro/network/gateway_url", "")).strip_edges()
+	if OS.has_feature("android"):
+		configured = str(ProjectSettings.get_setting("cockro/network/android_gateway_url", configured)).strip_edges()
 	if not configured.is_empty():
 		if configured.begins_with("https://"):
 			return configured.rstrip("/")
